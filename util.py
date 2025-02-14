@@ -7,6 +7,8 @@ id
 password
 '''
 
+# ffmpeg -f v4l2 -video_size 640x480 -i /dev/video0 -c:v libx264 -preset medium -crf 23 -f rtp rtp://127.0.0.1:5000
+
 def load_rtsp_credentials(filepath=CONFIG_FILE):
     """Loads RTSP URL, ID, and password from a text file."""
     try:
