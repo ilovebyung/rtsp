@@ -30,6 +30,8 @@ def main():
     try:
         # Create capture object
         cap = cv2.VideoCapture(rtsp_url)
+        speeds = []
+        
 
         if not cap.isOpened():
             print(f"Error: Could not open RTSP stream at {rtsp_url}")
@@ -52,6 +54,8 @@ def main():
 
             # Run YOLO detection
             results = model(frame)
+            speeds.append(results[0].speed['inference'])
+
 
             # Process detections
             for result in results:
@@ -80,6 +84,8 @@ def main():
         if 'cap' in locals() and cap is not None:
             cap.release()
         cv2.destroyAllWindows()
+        print("PPE inference", sum(speeds)/len(speeds))
+
 
 if __name__ == "__main__":
     main()
