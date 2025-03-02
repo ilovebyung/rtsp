@@ -1,3 +1,7 @@
+import time
+import os
+import cv2
+
 # Configuration file path
 CONFIG_FILE = "rtsp_config.txt"
 
@@ -34,3 +38,13 @@ def load_rtsp_credentials(filepath=CONFIG_FILE):
     except Exception as e:
         print(f"Error reading config file: {e}")
         return None
+
+
+def save_detected(save_dir, frame, last_save_time):
+        # Save image every second when a person is detected
+    current_time = time.time()
+    if current_time - last_save_time >= 1:
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        image_path = os.path.join(save_dir, f"detected_{timestamp}.jpg")
+        cv2.imwrite(image_path, frame)
+        last_save_time = current_time
