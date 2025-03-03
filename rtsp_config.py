@@ -35,8 +35,7 @@ def main():
         window_name = create_window()
 
         # Image saving setup
-        save_dir = "detected_images"
-        os.makedirs(save_dir, exist_ok=True)
+        save_dir = util.save_dir()
         last_save_time = 0
 
         while True:

@@ -39,6 +39,10 @@ def load_rtsp_credentials(filepath=CONFIG_FILE):
         print(f"Error reading config file: {e}")
         return None
 
+def save_dir():
+    save_dir = time.strftime("%Y%m%d")
+    os.makedirs(save_dir, exist_ok=True)
+    return save_dir
 
 def save_detected(save_dir, frame, last_save_time):
         # Save image every second when a person is detected
