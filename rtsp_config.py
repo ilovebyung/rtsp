@@ -1,5 +1,5 @@
 import cv2
-import os
+import numpy as np
 from ultralytics import YOLO
 import util
 
@@ -65,6 +65,22 @@ def main():
                                   cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
             
                         util.save_detected(save_dir, frame, last_save_time)
+
+                        # Convert to float for accurate calculations
+                        frame = frame.astype(np.float32)
+
+                        # Apply the color manipulation
+                        frame[:, :, 2] *= 1.4  # Red channel (OpenCV uses BGR)
+                        frame[:, :, 1] *= 0.8  # Green channel
+                        frame[:, :, 0] *= 0.8  # Blue channel
+
+                        # Clip values to the valid range [0, 255]
+                        frame = np.clip(frame, 0, 255)
+
+                        # Convert back to uint8
+                        frame = frame.astype(np.uint8)
+
+            # Display the frame
 
             cv2.imshow(window_name, frame)
 
