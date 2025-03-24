@@ -59,5 +59,6 @@ l10n/
 # deeplearning
 *.pt
 rtsp_config.txt
+timeout*
 
 
