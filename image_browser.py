@@ -194,17 +194,17 @@ else:
                         st.write(f"**Path:** {st.session_state.selected_image}")
                         st.write(f"**Size:** {img.width} x {img.height} pixels")
                         st.write(f"**Format:** {img.format}")
-                        if hasattr(img, 'info') and img.info:
-                            st.write("**Additional metadata:**")
-                            st.write(img.info)
+                        # if hasattr(img, 'info') and img.info:
+                        #     st.write("**Additional metadata:**")
+                        #     st.write(img.info)
                 
                 except Exception as e:
                     st.error(f"Error loading image: {str(e)}")
                 
-                # Return to grid view button
-                if st.button("Return to Grid View"):
-                    st.session_state.view_mode = "Grid View"
-                    st.rerun()  # Using st.rerun() instead of experimental_rerun
+                # # Return to grid view button
+                # if st.button("Return to Grid View"):
+                #     st.session_state.view_mode = "Grid View"
+                #     st.rerun()  # Using st.rerun() instead of experimental_rerun
         
         # Add date navigation
         st.sidebar.subheader("Date Navigation")
