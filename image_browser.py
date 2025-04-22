@@ -243,3 +243,13 @@ st.sidebar.info(
     - Navigate between dates using the buttons
     """
 )
+
+# Hide other elements with custom CSS
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            .stDeployButton {display:none;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
