@@ -13,8 +13,8 @@ st.set_page_config(
 )
 
 # Add title and description
-st.title("📅 Date-Based Image Browser")
-st.markdown("Browse images organized in folders by date (YYYYMMDD format)")
+# st.title("📅 Date-Based Image Browser")
+# st.markdown("Browse images organized in folders by date (YYYYMMDD format)")
 
 # Function to get all date folders
 def get_date_folders(base_path):
@@ -123,7 +123,7 @@ else:
             
             if view_mode == "Grid View":
                 # Grid settings
-                cols_per_row = st.sidebar.slider("Images per row:", 1, 6, 3)
+                cols_per_row = st.sidebar.slider("Images per row:", 1, 4, 3)
                 
                 # Create grid of images
                 cols = st.columns(cols_per_row)
@@ -137,11 +137,11 @@ else:
                             img = Image.open(img_path)
                             st.image(img, caption=img_filename, use_container_width=True)
                             
-                            # Add a button to view full size
-                            if st.button(f"View full size", key=f"view_{idx}"):
-                                st.session_state.selected_image = img_path
-                                st.session_state.view_mode = "Single Image View"
-                                st.rerun()  # Using st.rerun() instead of experimental_rerun
+                            # # Add a button to view full size
+                            # if st.button(f"View full size", key=f"view_{idx}"):
+                            #     st.session_state.selected_image = img_path
+                            #     st.session_state.view_mode = "Single Image View"
+                            #     st.rerun()  # Using st.rerun() instead of experimental_rerun
                                 
                         except Exception as e:
                             st.error(f"Error loading {img_filename}: {str(e)}")
