@@ -75,15 +75,13 @@ try:
     while True:
         ret, frame = cap.read()
 
-        if not ret:
-            print("Stream ended or connection lost.")
-            break
+        if ret:
 
-        # Write the frame to the output file
-        out.write(frame)
+            # Write the frame to the output file
+            out.write(frame)
 
-        # Optional: Display the stream (can be commented out if running headless)
-        cv2.imshow('RTSP Stream (Saving)', frame)
+            # Optional: Display the stream (can be commented out if running headless)
+            cv2.imshow('RTSP Stream (Saving)', frame)
 
         # Check for 'q' key press to stop recording
         if cv2.waitKey(1) & 0xFF == ord('q'):
