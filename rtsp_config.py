@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import threading
 from ultralytics import YOLO
 import util
 
@@ -64,7 +65,8 @@ def main():
                         cv2.putText(frame, label, (x1, y1 - 10), 
                                   cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
             
-                        util.save_detected(save_dir, frame, last_save_time)
+                        # util.save_detected(save_dir, frame, last_save_time)
+                        threading.Thread(target=util.save_detected, args=(save_dir, frame, last_save_time)).start()
 
                         # Convert to float for accurate calculations
                         frame = frame.astype(np.float32)
