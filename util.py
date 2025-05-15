@@ -44,17 +44,7 @@ def save_dir():
     os.makedirs(save_dir, exist_ok=True)
     return save_dir
 
-# def save_detected(save_dir, frame, last_save_time):
-#         # Save image every second when a person is detected
-#     current_time = time.time()
-#     if current_time - last_save_time >= 1:
-#         timestamp = time.strftime("%Y%m%d_%H%M%S")
-#         image_path = os.path.join(save_dir, f"detected_{timestamp}.jpg")
-#         cv2.imwrite(image_path, frame)
-#         last_save_time = current_time
-
-
-frame_count = 1  # Initialize frame counter
+frame_count = 0  # Initialize frame counter
 
 def save_detected(save_dir, frame, frame_count):
     # Save every 20th image when a person is detected
@@ -65,4 +55,10 @@ def save_detected(save_dir, frame, frame_count):
 
     return frame_count + 1  # Increment frame count
 
+
+def save_tracked(save_dir, frame):
+    # Save new detected  
+    timestamp = time.strftime("%Y%m%d_%H%M%S")
+    image_path = os.path.join(save_dir, f"detected_{timestamp}.jpg")
+    cv2.imwrite(image_path, frame)
 
