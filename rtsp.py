@@ -22,10 +22,21 @@ try:
     while True:
         ret, frame = cap.read()
 
+<<<<<<< HEAD
         if ret:
             # Run YOLO detection
             results = model(frame)
             speeds.append(results[0].speed['inference'])
+=======
+        if not ret:
+            print("End of stream or error")
+            break
+        else:
+            h,w,c = frame.shape
+
+        results = model(frame, imgsz=(h,w))
+        speeds.append(results[0].speed['inference'])
+>>>>>>> 2e34af4 (imgsz)
 
 
             # Process detections
