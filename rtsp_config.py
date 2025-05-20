@@ -46,12 +46,6 @@ def main():
 
             ret, frame = cap.read()
 
-<<<<<<< HEAD
-            if ret:
-
-                results = model(frame)
-                speeds.append(results[0].speed['inference'])
-=======
             if not ret:
                 print("End of stream or error")
                 break
@@ -60,7 +54,6 @@ def main():
 
             results = model(frame, imgsz=(h,w))
             speeds.append(results[0].speed['inference'])
->>>>>>> 2e34af4 (imgsz)
 
                 for result in results:
                     boxes = result.boxes.cpu().numpy()
