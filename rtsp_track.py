@@ -53,8 +53,9 @@ def main():
             ret, frame = cap.read()
 
             if ret:
+                h,w,c = frame.shape
                 # result = model.track(frame, persist=True, imgsz=(720, 1920))[0] ## Update imgsz to yours
-                result = model.track(frame, persist=True)[0] 
+                result = model.track(frame, imgsz=(h,w), persist=True)[0] 
 
                 # Get the boxes and track IDs
                 if result.boxes.id is not None:

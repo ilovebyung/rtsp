@@ -55,41 +55,41 @@ def main():
             results = model(frame, imgsz=(h,w))
             speeds.append(results[0].speed['inference'])
 
-                for result in results:
-                    boxes = result.boxes.cpu().numpy()
-                    for box in boxes:
-                        x1, y1, x2, y2 = box.xyxy[0].astype(int)
-                        conf = box.conf[0]
-                        cls = int(box.cls[0]) # person class
-                        if cls == 0:
-                            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
-                            label = f'{model.names[cls]} {conf:.2f}'
-                            cv2.putText(frame, label, (x1, y1 - 10), 
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-                
-                            # util.save_detected(save_dir, frame, last_save_time)
-                            threading.Thread(target=util.save_detected, args=(save_dir, frame, last_save_time)).start()
+            for result in results:
+                boxes = result.boxes.cpu().numpy()
+                for box in boxes:
+                    x1, y1, x2, y2 = box.xyxy[0].astype(int)
+                    conf = box.conf[0]
+                    cls = int(box.cls[0]) # person class
+                    if cls == 0:
+                        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
+                        label = f'{model.names[cls]} {conf:.2f}'
+                        cv2.putText(frame, label, (x1, y1 - 10), 
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+            
+                        # util.save_detected(save_dir, frame, last_save_time)
+                        threading.Thread(target=util.save_detected, args=(save_dir, frame, last_save_time)).start()
 
-                            # Convert to float for accurate calculations
-                            frame = frame.astype(np.float32)
+                        # Convert to float for accurate calculations
+                        frame = frame.astype(np.float32)
 
-                            # Apply the color manipulation
-                            frame[:, :, 2] *= 1.4  # Red channel (OpenCV uses BGR)
-                            frame[:, :, 1] *= 0.8  # Green channel
-                            frame[:, :, 0] *= 0.8  # Blue channel
+                        # Apply the color manipulation
+                        frame[:, :, 2] *= 1.4  # Red channel (OpenCV uses BGR)
+                        frame[:, :, 1] *= 0.8  # Green channel
+                        frame[:, :, 0] *= 0.8  # Blue channel
 
-                            # Clip values to the valid range [0, 255]
-                            frame = np.clip(frame, 0, 255)
+                        # Clip values to the valid range [0, 255]
+                        frame = np.clip(frame, 0, 255)
 
-                            # Convert back to uint8
-                            frame = frame.astype(np.uint8)
+                        # Convert back to uint8
+                        frame = frame.astype(np.uint8)
 
-               # Display the frame
+            # Display the frame
 
-                cv2.imshow(window_name, frame)
+            cv2.imshow(window_name, frame)
 
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
     except Exception as e:
         print(f"An error occurred: {e}")
