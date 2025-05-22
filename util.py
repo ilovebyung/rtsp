@@ -50,7 +50,7 @@ def save_detected(save_dir, frame, frame_count):
     # Save every 20th image when a person is detected
     if frame_count % 20 == 0:  # Check if the frame count is a multiple of 20
         timestamp = time.strftime("%Y%m%d_%H%M%S")
-        image_path = os.path.join(save_dir, f"detected_{timestamp}.jpg")
+        image_path = os.path.join(save_dir, f"{timestamp}.jpg")
         cv2.imwrite(image_path, frame)
 
     return frame_count + 1  # Increment frame count
@@ -59,6 +59,6 @@ def save_detected(save_dir, frame, frame_count):
 def save_tracked(save_dir, frame):
     # Save new detected  
     timestamp = time.strftime("%Y%m%d_%H%M%S")
-    image_path = os.path.join(save_dir, f"detected_{timestamp}.jpg")
+    image_path = os.path.join(save_dir, f"{timestamp}.jpg")
     cv2.imwrite(image_path, frame)
 
