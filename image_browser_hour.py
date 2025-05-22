@@ -18,7 +18,7 @@ st.set_page_config(
 
 def parse_filename_datetime(filename):
     """
-    Parses a filename like YYYYMMDD-HHMMSS.jpg to a datetime object.
+    Parses a filename like YYYYMMDD_HHMMSS.jpg to a datetime object.
     Returns None if the filename format doesn't match.
     """
     # Regex to match YYYYMMDD_HHMMSS
