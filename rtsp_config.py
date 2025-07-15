@@ -23,7 +23,7 @@ def main():
         print("Failed to load RTSP credentials. Exiting.")
         return
 
-    model = YOLO("yolo11s.pt")
+    model = YOLO("yolo11n.pt")
     
     try:
         cap = cv2.VideoCapture(rtsp_url)
@@ -52,7 +52,8 @@ def main():
             else:
                 h,w,c = frame.shape
 
-            results = model(frame, imgsz=(h,w))
+            # results = model(frame, imgsz=(h,w))
+            results = model(frame)
             speeds.append(results[0].speed['inference'])
 
             for result in results:

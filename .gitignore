@@ -46,6 +46,8 @@ pydevd*.log
 nodeLanguageServer/**
 nodeLanguageServer.*/**
 dist/**
+*.csv
+*.yaml
 # translation files
 *.xlf
 package.nls.*.json
@@ -61,5 +63,6 @@ l10n/
 *.pt
 rtsp_config.txt
 timeout*
+*.cache
 
 
