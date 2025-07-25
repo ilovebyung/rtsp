@@ -5,6 +5,8 @@ from ultralytics import YOLO
 from collections import defaultdict
 import util
 
+model = YOLO("crane.pt")  ## Use custon model to detect PPE
+
 # Store the track history
 track_history = defaultdict(lambda: [])
 
@@ -20,6 +22,14 @@ def is_window_closed(window_name):
     except:
         return True
 
+def is_moving(image_path):
+    image = cv2.imread(image_path)
+    results = model(image, imgsz=640)  # Adjust image size if necessary
+    class_id = int(results[0].probs.top1)
+    if class_id == 0:   # Assuming class_id 0 corresponds to 'crane'
+        return True  
+    return False
+
 def main():
     rtsp_url = util.load_rtsp_credentials("rtsp_config.txt")
 
@@ -30,8 +40,6 @@ def main():
     # Initialize the new_id variable
     max_id = 0
     new_id = 0
-
-    model = YOLO("yolo11s.pt")  ## Use custon model to detect PPE
     
     try:
         cap = cv2.VideoCapture(rtsp_url)
