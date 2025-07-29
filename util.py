@@ -62,3 +62,55 @@ def save_tracked(save_dir, frame):
     image_path = os.path.join(save_dir, f"{timestamp}.jpg")
     cv2.imwrite(image_path, frame)
 
+
+# Initialize webcam
+cap = cv2.VideoCapture(0)
+
+# Create MOG2 background subtractor
+fgbg = cv2.createBackgroundSubtractorMOG2()
+kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    # Convert frame to grayscale
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # Apply background subtraction 
+    fgmask = fgbg.apply(gray)
+    # Apply morphological operations to reduce noise
+    fgmask_cleaned = cv2.morphologyEx(fgmask, cv2.MORPH_OPEN, kernel)
+    # Bitwise AND to isolate moving pixels in grayscale
+    moving_pixels_gray = cv2.bitwise_and(gray, fgmask_cleaned)
+
+    # Display result
+    cv2.imshow("Grayscale Moving Pixels (MOG2)", moving_pixels_gray)
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    try:
+        # Load RTSP credentials
+        rtsp_url = load_rtsp_credentials()
+        if not rtsp_url:
+            raise ValueError("Failed to load RTSP credentials.")
+
+        # Open video capture
+        cap = cv2.VideoCapture(rtsp_url)
+        if not cap.isOpened():
+            raise ValueError("Failed to open video capture.")
+
+        window_name = "RTSP Stream"
+        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+
+        # Initialize model and track history
+        model = ...  # Load your tracking model here
+        track_history = {}
+        new_id = -1  # Initialize new ID
+
+        save_dir = util.save_dir()  # Get save directory

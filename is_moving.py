@@ -1,52 +1,52 @@
 from ultralytics import YOLO
 import cv2
-import matplotlib.pyplot as plt
-import os
+
 
 # Load a pretrained classification model or your custom model
-model = YOLO("crane.pt")  # Replace with your custom model  
+model_crane = YOLO("crane.pt")  # Replace with your custom model  
 
-# Path to the folder containing your sample images
-image_folder = 'samples'
-files = os.listdir(image_folder)
+# Initialize webcam
+cap = cv2.VideoCapture('D02.mp4')
 
-for file in files:
-    image_path = os.path.join(image_folder, file)
-    image = cv2.imread(image_path)
+'''
+function to check if the crane is moving
+'''
+# Create a Background Subtractor using MOG2
+background_subtractor = cv2.createBackgroundSubtractorMOG2(history=50, varThreshold=16, detectShadows=True)
+
+
+def is_moving(frame):
+    # Apply the background subtractor to the frame
+    fg_mask = background_subtractor.apply(frame)
+
+    # Optional: Apply morphological operations to clean up the mask
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+    fg_mask = cv2.morphologyEx(fg_mask, cv2.MORPH_OPEN, kernel)
 
     # Predict class using YOLO classification
-    results = model(image)
-
-    # Get class name and confidence
+    results = model_crane(frame, imgsz=640)  
     class_id = int(results[0].probs.top1)
-    class_name = results[0].names[class_id]
-    confidence = results[0].probs.top1conf
-
-    # Display image and prediction
-    # plt.imshow(image)
-    print(f"Class: {class_name} | Confidence: {confidence * 100, 2}%")
-
-
-# Example usage with a specific image file
-file = '/home/byungsoo/Documents/rtsp/samples/frame_0019.jpg'
-image = cv2.imread(file)
-results = model(image, imgsz=640) 
-plt.imshow(image)
-# Get class name and confidence
-class_id = int(results[0].probs.top1)
-class_name = results[0].names[class_id]
-confidence = results[0].probs.top1conf
-print(f"Class: {class_name} | Confidence: {confidence * 100, 2}%")
-
-
-def is_moving(image_path):
-    image = cv2.imread(image_path)
-    results = model(image, imgsz=640)  # Adjust image size if necessary
-    class_id = int(results[0].probs.top1)
-    if class_id == 0:   # Assuming class_id 0 corresponds to 'crane'
+    if class_id == 0:   # Assuming class_id 0 corresponds to 'crane moving'
         return True  
     return False
-    
-file = 'samples/frame_0019.jpg' # moving crane
-file = 'samples/frame_0678.jpg' # not moving crane
-is_moving(file)
+
+
+'''
+sanity check
+'''
+while True:
+    # Read a frame from the video capture
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    is_moving(frame)
+
+    # Break the loop if 'q' is pressed
+    if cv2.waitKey(30) & 0xFF == ord('q'):
+        break
+
+# Release the video capture and close all windows
+cap.release()
+cv2.destroyAllWindows()
+
