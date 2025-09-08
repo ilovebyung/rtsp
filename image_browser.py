@@ -1,9 +1,58 @@
 import streamlit as st
 import os
 import glob
+import io
+import zipfile
+import shutil
 from datetime import datetime
 from PIL import Image
-import io
+
+def zip_and_download_folder(base_path, date_string):
+    """
+    Zips a folder with the specified name and provides a download button.
+
+    Args:
+        base_path (str): The base directory containing the folders.
+        date_string (str): The name of the folder to zip (e.g., '20250908').
+    """
+    folder_path = os.path.join(base_path, date_string)
+    zip_filename = f"{date_string}.zip"
+
+    # Check if the folder exists
+    if not os.path.isdir(folder_path):
+        st.error(f"Error: The folder '{date_string}' does not exist.")
+        return
+
+    # Create a temporary directory for the zip file to avoid issues with the source folder
+    temp_dir = 'temp_zip'
+    os.makedirs(temp_dir, exist_ok=True)
+    temp_zip_path = os.path.join(temp_dir, zip_filename)
+
+    try:
+        # Create a zip file of the specified folder
+        with zipfile.ZipFile(temp_zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for root, _, files in os.walk(folder_path):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    # Add file to zip, preserving the folder structure
+                    zipf.write(file_path, os.path.relpath(file_path, base_path))
+
+        # Read the zipped file in binary mode
+        with open(temp_zip_path, "rb") as f:
+            st.download_button(
+                label=f"Download {zip_filename}",
+                data=f,
+                file_name=zip_filename,
+                mime="application/zip"
+            )
+
+    except Exception as e:
+        st.error(f"An error occurred while zipping the folder: {e}")
+
+    finally:
+        # Clean up the temporary directory
+        if os.path.exists(temp_dir):
+            shutil.rmtree(temp_dir)
 
 # Set page configuration
 st.set_page_config(
@@ -11,10 +60,6 @@ st.set_page_config(
     page_icon="📅",
     layout="wide"
 )
-
-# Add title and description
-# st.title("📅 Date-Based Image Browser")
-# st.markdown("Browse images organized in folders by date (YYYYMMDD format)")
 
 # Function to get all date folders
 def get_date_folders(base_path):
@@ -108,12 +153,16 @@ else:
         
         # Get images for the selected date
         images = get_images_in_folder(selected_date_folder)
+
+        # Add the download button
+        st.subheader(f"{selected_display_date}")
+        zip_and_download_folder(base_dir, os.path.basename(selected_date_folder))
         
         if not images:
             st.info(f"No images found in folder: {os.path.basename(selected_date_folder)}")
         else:
             # Show number of images found
-            st.subheader(f"{selected_display_date}: {len(images)} images found")
+            st.write(f"{len(images)} images found")
             
             # Image view options
             view_mode = st.sidebar.radio(
@@ -135,13 +184,7 @@ else:
                         img_filename = os.path.basename(img_path)
                         try:
                             img = Image.open(img_path)
-                            st.image(img, caption=img_filename, use_container_width=True)
-                            
-                            # # Add a button to view full size
-                            # if st.button(f"View full size", key=f"view_{idx}"):
-                            #     st.session_state.selected_image = img_path
-                            #     st.session_state.view_mode = "Single Image View"
-                            #     st.rerun()  # Using st.rerun() instead of experimental_rerun
+                            st.image(img, caption=img_filename, width='stretch')
                                 
                         except Exception as e:
                             st.error(f"Error loading {img_filename}: {str(e)}")
@@ -175,7 +218,7 @@ else:
                 # Display the selected image
                 try:
                     img = Image.open(st.session_state.selected_image)
-                    st.image(img, caption=os.path.basename(st.session_state.selected_image), use_container_width=True)
+                    st.image(img, caption=os.path.basename(st.session_state.selected_image), width='stretch')
                     
                     # Allow image download
                     buf = io.BytesIO()
@@ -194,20 +237,10 @@ else:
                         st.write(f"**Path:** {st.session_state.selected_image}")
                         st.write(f"**Size:** {img.width} x {img.height} pixels")
                         st.write(f"**Format:** {img.format}")
-                        # if hasattr(img, 'info') and img.info:
-                        #     st.write("**Additional metadata:**")
-                        #     st.write(img.info)
                 
                 except Exception as e:
                     st.error(f"Error loading image: {str(e)}")
-                
-                # # Return to grid view button
-                # if st.button("Return to Grid View"):
-                #     st.session_state.view_mode = "Grid View"
-                #     st.rerun()  # Using st.rerun() instead of experimental_rerun
         
-        # Add date navigation
-        st.sidebar.subheader("Date Navigation")
         
         # Get current date index
         current_date_idx = date_folders.index(selected_date_folder)
@@ -232,24 +265,3 @@ else:
                     # This navigates to a newer date
                     st.session_state.selected_date = prev_folder
                     st.rerun()  # Using st.rerun() instead of experimental_rerun
-
-# Add footer
-st.sidebar.markdown("---")
-st.sidebar.info(
-    """
-    This app browses images in directories organized by date (YYYYMMDD format).
-    - Select a date from the dropdown to view images
-    - Choose between grid and single image views
-    - Navigate between dates using the buttons
-    """
-)
-
-# Hide other elements with custom CSS
-hide_streamlit_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            .stDeployButton {display:none;}
-            </style>
-            """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
